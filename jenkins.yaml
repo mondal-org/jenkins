@@ -86,7 +86,7 @@ spec:
     spec:
       containers:
         - name: jenkins
-          image: myk8sjenkins:lts
+          image: myk8sjenkins:latest
           env:
             - name: JAVA_OPTS
               value: -Djenkins.install.runSetupWizard=false
@@ -96,20 +96,15 @@ spec:
             - name: jnlp-port
               containerPort: 50000
           volumeMounts:
-            - name: jenkins-home
+            - name: myjenkin-persistent-storage
               mountPath: /var/jenkins_home
-            - name: docker-sock-volume
-              mountPath: "/var/run/docker.sock"
           imagePullPolicy: Never
       volumes:
-        # This allows jenkins to use the docker daemon on the host, for running builds
-        # see https://stackoverflow.com/questions/27879713/is-it-ok-to-run-docker-from-inside-docker
-        - name: docker-sock-volume
-          hostPath:
-            path: /var/run/docker.sock
-        - name: jenkins-home
-          hostPath:
-            path: /mnt/jenkins-home/volume/
+        - name: myjenkin-persistent-storage
+          # pointer to the configuration of HOW we want the mount to be implemented
+          persistentVolumeClaim:
+            claimName: myjenkins-pvc
+
       serviceAccountName: jenkins
 ---
 apiVersion: v1
@@ -129,4 +124,5 @@ spec:
       targetPort: 50000
   selector:
     app: jenkins
+
 ---

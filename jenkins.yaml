@@ -86,7 +86,7 @@ spec:
     spec:
       containers:
         - name: jenkins
-          image: myjenkins:latest
+          image: myk8sjenkins:lts
           env:
             - name: JAVA_OPTS
               value: -Djenkins.install.runSetupWizard=false
@@ -109,7 +109,7 @@ spec:
             path: /var/run/docker.sock
         - name: jenkins-home
           hostPath:
-            path: /mnt/jenkins-store
+            path: /mnt/jenkins-home/volume/
       serviceAccountName: jenkins
 ---
 apiVersion: v1
